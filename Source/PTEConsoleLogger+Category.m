@@ -36,7 +36,7 @@
             //AppKit UI should only be updated from the main thread
             dispatch_async(dispatch_get_main_queue(),^{
                 NSString* stdOutString = [[NSString alloc] initWithBytesNoCopy:data length:readResult encoding:NSUTF8StringEncoding freeWhenDone:YES];
-                DDLogMessage* msg = [[DDLogMessage alloc] initWithMessage:stdOutString level:DDLogLevelInfo flag:DDLogFlagInfo context:0 file:nil function:nil line:0 tag:@"STD" options:(DDLogMessageOptions)0 timestamp:[NSDate date]];
+                DDLogMessage* msg = [[DDLogMessage alloc] initWithMessage:stdOutString level:DDLogLevelInfo flag:DDLogFlagInfo context:0 file:@"" function:@"" line:0 tag:@"STD" options:(DDLogMessageOptions)0 timestamp:[NSDate date]];
                 [self logMessage:msg];
                 [myHandle writeData:(__bridge NSData * _Nonnull)(data)];
             });
