@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PTEConsoleLogger (PTEConsoleLogger_Category)
-- (void)openConsolePipeWith:(NSString*)filePath;
+- (void)openConsolePipeWith:(DDFileLogger*)fileLogger;
 - (void)logMessage:(DDLogMessage*)message;
 @end
 
