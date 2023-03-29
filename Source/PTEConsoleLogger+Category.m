@@ -16,6 +16,9 @@ NSPipe* pipeErr;
 dispatch_source_t source;
 dispatch_source_t sourceErr;
 
+int stderrSave;
+int stdoutSave;
+
 - (void) startMonitoring:(dispatch_source_t)source pipeReadHandle:(NSFileHandle*)pipeReadHandle  {
     dispatch_source_set_event_handler(source, ^{
         __block void* data = malloc(4096);
@@ -47,7 +50,8 @@ dispatch_source_t sourceErr;
 - (void)openConsolePipeWith:(DDFileLogger *)fileLogger {
     stdPipe = [NSPipe pipe];
     pipeReadHandle = [stdPipe fileHandleForReading];
-
+    stdoutSave = dup(STDOUT_FILENO);
+    stderrSave = dup(STDERR_FILENO);
     setvbuf(stdout, nil, _IONBF, 0);
     dup2([[stdPipe fileHandleForWriting] fileDescriptor], STDOUT_FILENO);
     setvbuf(stderr, nil, _IONBF, 0);
@@ -59,5 +63,18 @@ dispatch_source_t sourceErr;
     source = dispatch_source_create(DISPATCH_SOURCE_TYPE_READ, [pipeReadHandle fileDescriptor], 0, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0));
     [self startMonitoring:source pipeReadHandle:pipeReadHandle];
     dispatch_resume(source);
+    
+    printf("Redirected console");
+    printf("******************");
+}
+
+- (void)closeConsolePipe {
+    dup2(stdoutSave, STDOUT_FILENO);
+    close(stdoutSave);
+    dup2(stderrSave, STDERR_FILENO);
+    close(stderrSave);
+    printf("Redirected back to console");
+    printf("**************************");
+    close(stdPipe);
 }
 @end
